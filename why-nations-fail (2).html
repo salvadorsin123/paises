@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>¿Por qué fracasan los países?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400;1,700&family=Special+Elite&family=Bebas+Neue&family=Permanent+Marker&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cork:    #1a1208;
+  --cork2:   #221a0e;
+  --paper:   #f2e8d5;
+  --paper2:  #e8dcc8;
+  --cream:   #fdf6e8;
+  --red:     #c8192c;
+  --red2:    #e63946;
+  --tape:    rgba(220,200,150,0.35);
+  --ink:     #1a1208;
+  --ink2:    #3d2e1a;
+  --faded:   #7a6a52;
+  --gold:    #d4a017;
+  --shadow:  rgba(0,0,0,0.6);
+  --string:  #c0392b;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--cork);color:var(--ink);font-family:'Special Elite',cursive;overflow-x:hidden;cursor:default}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.07'/%3E%3C/svg%3E");pointer-events:none;z-index:9998;mix-blend-mode:overlay;opacity:0.35}
+
+/* PROGRESS */
+#pb{position:fixed;top:0;left:0;height:3px;width:0%;background:var(--red);z-index:9999;box-shadow:0 0 8px var(--red);transition:width .1s}
+
+/* LOADER */
+#loader{position:fixed;inset:0;background:var(--cork);z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;transition:opacity .8s,visibility .8s}
+#loader.gone{opacity:0;visibility:hidden;pointer-events:none}
+.ld-title{font-family:'Bebas Neue',sans-serif;font-size:52px;color:var(--paper);letter-spacing:8px;animation:flick 2s ease infinite}
+.ld-bar{height:2px;background:var(--red);animation:ldbar 1.4s ease forwards .3s;clip-path:inset(0 100% 0 0);width:280px}
+.ld-sub{font-family:'Special Elite',cursive;font-size:11px;color:var(--faded);letter-spacing:4px;text-transform:uppercase}
+@keyframes ldbar{to{clip-path:inset(0 0% 0 0)}}
+@keyframes flick{0%,100%{opacity:1}93%{opacity:.6}98%{opacity:1}}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:12px 40px;display:flex;align-items:center;justify-content:space-between;background:rgba(10,8,4,.92);backdrop-filter:blur(8px);border-bottom:1px solid rgba(242,232,213,.1)}
+.nlogo{font-family:'Playfair Display',serif;font-size:14px;font-style:italic;color:var(--paper);text-decoration:none}
+.nlinks{display:flex;gap:28px;list-style:none}
+.nlinks a{font-family:'Special Elite',cursive;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--faded);text-decoration:none;transition:color .3s}
+.nlinks a:hover{color:var(--paper)}
+.nburg{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer}
+.nburg span{display:block;width:22px;height:1px;background:var(--paper)}
+
+/* MOBILE NAV */
+.mnav{display:none;position:fixed;inset:0;background:rgba(10,8,4,.97);z-index:900;flex-direction:column;align-items:center;justify-content:center;gap:28px}
+.mnav.open{display:flex}
+.mnav a{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:6px;color:var(--paper);text-decoration:none;transition:color .3s}
+.mnav a:hover{color:var(--red2)}
+.mnclose{position:absolute;top:20px;right:24px;background:none;border:1px solid rgba(242,232,213,.2);color:var(--faded);width:40px;height:40px;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .3s}
+.mnclose:hover{border-color:var(--red);color:var(--red2)}
+
+/* DECORATIVE */
+.tape{display:block;height:22px;background:var(--tape);border-top:1px solid rgba(220,200,150,.2);border-bottom:1px solid rgba(220,200,150,.2);position:absolute;z-index:10;pointer-events:none}
+.pin{width:14px;height:14px;border-radius:50%;position:absolute;top:-7px;z-index:20;box-shadow:0 2px 6px rgba(0,0,0,.5)}
+.pin::after{content:'';position:absolute;bottom:-6px;left:50%;transform:translateX(-50%);width:2px;height:8px;background:rgba(0,0,0,.4);border-radius:1px}
+.pin-r{background:radial-gradient(circle at 35% 35%,#ff6666,var(--red));left:50%;transform:translateX(-50%)}
+.pin-b{background:radial-gradient(circle at 35% 35%,#88ccff,#1a5fa8);left:30%;transform:translateX(-30%)}
+.pin-g{background:radial-gradient(circle at 35% 35%,#ffe066,var(--gold));left:70%;transform:translateX(-70%)}
+.pin-gr{background:radial-gradient(circle at 35% 35%,#88ffbb,#1a7a4a);left:50%;transform:translateX(-50%)}
+.pin-w{background:radial-gradient(circle at 35% 35%,#fff,#ccc);left:50%;transform:translateX(-50%)}
+.stamp{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:4px;color:var(--red);border:3px solid var(--red);padding:4px 12px;text-transform:uppercase;opacity:.7;transform:rotate(-12deg);position:absolute;pointer-events:none;filter:blur(.3px)}
+
+/* REVEAL */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .9s ease,transform .9s ease}
+.reveal.in{opacity:1;transform:translateY(0)}
+
+/* TYPOGRAPHY UTILS */
+.slabel{font-family:'Permanent Marker',cursive;font-size:13px;color:var(--faded);letter-spacing:1px;opacity:.7}
+.stitle{font-family:'Bebas Neue',sans-serif;font-size:clamp(34px,5vw,64px);color:var(--paper);letter-spacing:4px;line-height:1;text-shadow:2px 2px 0 rgba(0,0,0,.5)}
+.ssub{font-family:'IM Fell English',serif;font-style:italic;font-size:17px;color:rgba(242,232,213,.55);max-width:540px;line-height:1.6;margin-top:8px}
+
+/* ======================== HERO ======================== */
+#hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:100px 20px 60px;position:relative;overflow:hidden;background:radial-gradient(ellipse at 20% 30%,rgba(80,50,10,.3) 0%,transparent 60%),radial-gradient(ellipse at 80% 70%,rgba(60,35,8,.4) 0%,transparent 60%),linear-gradient(135deg,#1a1208 0%,#221a0e 50%,#1a1208 100%)}
+.hero-strings{position:absolute;inset:0;pointer-events:none;z-index:0}
+.hero-inner{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:0;max-width:600px;text-align:center}
+
+/* Book polaroid */
+.book-pol{background:var(--cream);padding:10px 10px 48px 10px;box-shadow:0 20px 60px rgba(0,0,0,.7),0 4px 12px rgba(0,0,0,.4);transform:rotate(-2deg);position:relative;margin-bottom:40px;width:230px}
+.book-pol:hover{transform:rotate(0) scale(1.04);box-shadow:0 30px 80px rgba(0,0,0,.8)}
+.book-pol img{width:100%;height:280px;object-fit:cover;display:block;filter:sepia(.4) contrast(1.1)}
+.book-pol .bpcap{text-align:center;font-family:'Permanent Marker',cursive;font-size:12px;color:var(--ink2);margin-top:8px;line-height:1.4}
+.hero-badge{position:absolute;top:18px;right:-28px;background:var(--red);color:white;font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:2px;padding:6px 12px;transform:rotate(12deg);box-shadow:0 3px 10px rgba(0,0,0,.4);z-index:5}
+
+/* Scattered around hero */
+.hero-scatter{position:absolute;inset:0;pointer-events:none;z-index:1}
+.spol{position:absolute;background:var(--cream);padding:5px 5px 28px 5px;box-shadow:0 8px 24px rgba(0,0,0,.5)}
+.spol img{object-fit:cover;display:block;filter:sepia(.6) contrast(1.05)}
+.spol .scap{text-align:center;font-family:'Permanent Marker',cursive;font-size:8px;color:var(--ink2);margin-top:5px}
+
+.herot{font-family:'Playfair Display',serif;font-weight:900;font-size:clamp(38px,7vw,88px);color:var(--paper);line-height:1;text-shadow:3px 3px 0 rgba(0,0,0,.4),0 0 40px rgba(200,25,44,.15);letter-spacing:-1px}
+.herot .hl{color:var(--red2);font-style:italic}
+.hdiv{width:100px;height:1px;background:linear-gradient(90deg,transparent,var(--red),transparent);margin:18px auto}
+.hauth{font-family:'IM Fell English',serif;font-style:italic;font-size:18px;color:rgba(242,232,213,.7);letter-spacing:2px}
+.hquote{margin-top:32px;max-width:600px;background:rgba(242,232,213,.06);border-left:3px solid var(--red);padding:14px 22px;font-family:'IM Fell English',serif;font-style:italic;font-size:17px;color:rgba(242,232,213,.8);line-height:1.7;text-align:left}
+.scrollhint{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);font-family:'Special Elite',cursive;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--faded);display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;z-index:2}
+.sarrow{width:1px;height:30px;background:var(--red);animation:apulse 1.5s ease infinite}
+@keyframes apulse{0%,100%{transform:scaleY(1);opacity:1}50%{transform:scaleY(.7);opacity:.5}}
+
+/* ======================== COLLAGE BOARD ======================== */
+#collage{padding:80px 40px;position:relative;overflow:hidden;background:radial-gradient(ellipse at 70% 20%,rgba(60,35,8,.35) 0%,transparent 55%),linear-gradient(180deg,#1a1208,#0f0c08 100%)}
+.cb-header{margin-bottom:60px;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:20px;position:relative;z-index:2}
+.cb-note{font-family:'Permanent Marker',cursive;font-size:13px;color:rgba(242,232,213,.35);max-width:180px;text-align:right;transform:rotate(2deg)}
+
+/* String SVG */
+.board-strings{position:absolute;inset:0;pointer-events:none;z-index:1;overflow:visible}
+
+/* GRID */
+.cboard{position:relative;z-index:2;display:grid;grid-template-columns:repeat(12,1fr);grid-template-rows:repeat(14,70px);gap:12px}
+
+/* CARD BASE */
+.cc{position:relative;cursor:pointer;transition:transform .35s cubic-bezier(.23,1,.32,1),box-shadow .35s,z-index 0s;z-index:2}
+.cc:hover{z-index:100}
+
+/* Polaroid */
+.pol{background:var(--cream);padding:8px 8px 40px 8px;box-shadow:0 10px 36px rgba(0,0,0,.6),0 3px 8px rgba(0,0,0,.3)}
+.pol:hover{transform:scale(1.07) rotate(0deg)!important;box-shadow:0 24px 70px rgba(0,0,0,.8),0 0 0 2px var(--red)}
+.pol img{width:100%;height:100%;object-fit:cover;display:block;transition:filter .3s}
+.pol:hover img{filter:sepia(0)!important}
+.polcap{font-family:'Permanent Marker',cursive;font-size:11px;color:var(--ink2);text-align:center;margin-top:7px;padding:0 3px;line-height:1.4}
+
+/* News clipping */
+.nc{background:var(--paper2);border:1px solid rgba(100,80,50,.3);padding:16px 18px;box-shadow:0 8px 28px rgba(0,0,0,.55);position:relative;overflow:hidden}
+.nc::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Ccircle cx='1' cy='1' r='.4' fill='rgba(0,0,0,.05)'/%3E%3C/svg%3E");pointer-events:none}
+.nc:hover{transform:scale(1.05) rotate(0deg)!important;box-shadow:0 20px 60px rgba(0,0,0,.7),0 0 0 2px var(--red)}
+.nc .kick{font-family:'Special Elite',cursive;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--red);border-bottom:1px solid var(--red);padding-bottom:3px;margin-bottom:7px}
+.nc .nch{font-family:'Playfair Display',serif;font-size:16px;font-weight:900;color:var(--ink);line-height:1.2;margin-bottom:7px}
+.nc .ncb{font-family:'IM Fell English',serif;font-size:12px;color:var(--ink2);line-height:1.5}
+
+/* Photo overlay */
+.pov{position:relative;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,.7)}
+.pov:hover{transform:scale(1.04)!important;box-shadow:0 24px 70px rgba(0,0,0,.8)}
+.pov img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s,filter .3s}
+.pov:hover img{transform:scale(1.08);filter:sepia(.15) contrast(1.1)!important}
+.povl{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.85));padding:28px 14px 12px;color:white;font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:3px}
+.povs{font-family:'Special Elite',cursive;font-size:10px;color:rgba(255,255,255,.6);letter-spacing:1px;margin-top:2px}
+
+/* Note card */
+.nte{padding:18px 20px;box-shadow:0 8px 28px rgba(0,0,0,.6);position:relative}
+.nte:hover{transform:scale(1.05) rotate(0deg)!important;box-shadow:0 20px 60px rgba(0,0,0,.7)}
+.nte-y{background:#f5e642}.nte-b{background:#b8d4f0}.nte-p{background:#f4b8c0}.nte-g{background:#b8f0c8}
+.nte .nt{font-family:'Permanent Marker',cursive;font-size:14px;color:var(--ink);margin-bottom:7px;line-height:1.3}
+.nte .nb{font-family:'Special Elite',cursive;font-size:11px;color:var(--ink2);line-height:1.6}
+
+/* Korea special */
+.kcard{background:var(--cream);box-shadow:0 16px 60px rgba(0,0,0,.7);overflow:hidden}
+.kcard:hover{transform:scale(1.02)!important;box-shadow:0 24px 80px rgba(0,0,0,.8)}
+
+/* Grid positions */
+#ci{grid-column:1/5;grid-row:1/7;transform:rotate(-1.5deg)}
+#ce{grid-column:5/9;grid-row:1/6;transform:rotate(2deg)}
+#cd{grid-column:9/13;grid-row:1/7;transform:rotate(-.8deg)}
+#cn1{grid-column:5/8;grid-row:5/8;transform:rotate(-4deg);z-index:5}
+#ciq{grid-column:1/5;grid-row:7/12;transform:rotate(1.5deg)}
+#col{grid-column:4/9;grid-row:6/11;transform:rotate(-1deg)}
+#ccr{grid-column:8/13;grid-row:7/12;transform:rotate(2.5deg)}
+#cn2{grid-column:9/12;grid-row:11/14;transform:rotate(5deg);z-index:5}
+#cn3{grid-column:1/4;grid-row:12/15;transform:rotate(-3deg);z-index:5}
+#ck{grid-column:3/11;grid-row:11/15}
+
+/* ======================== COMPARATIVA ======================== */
+#comparativa{padding:80px 40px;background:linear-gradient(180deg,#0f0c08,#1a1208)}
+.cmpwrap{max-width:1000px;margin:50px auto 0;display:grid;grid-template-columns:1fr 1fr;gap:32px}
+.np{background:var(--paper2);padding:26px;box-shadow:0 16px 50px rgba(0,0,0,.6);position:relative;border-top:4px solid var(--ink);transition:transform .3s}
+.np-i{transform:rotate(-1.5deg)}.np-i:hover{transform:rotate(0) translateY(-6px)}
+.np-e{transform:rotate(1.5deg)}.np-e:hover{transform:rotate(0) translateY(-6px)}
+.npmast{text-align:center;border-bottom:2px solid var(--ink);padding-bottom:8px;margin-bottom:12px}
+.npname{font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:var(--ink);letter-spacing:2px}
+.npdate{font-family:'Special Elite',cursive;font-size:9px;color:var(--faded);letter-spacing:2px;margin-top:3px}
+.nphl{font-family:'Playfair Display',serif;font-size:18px;font-weight:900;color:var(--ink);line-height:1.2;margin-bottom:10px;border-bottom:1px solid rgba(0,0,0,.2);padding-bottom:8px}
+.npimg{width:100%;height:140px;object-fit:cover;display:block;margin-bottom:12px;filter:sepia(.5) contrast(1.05)}
+.npcols{display:grid;grid-template-columns:1fr 1fr;gap:10px;border-top:1px solid rgba(0,0,0,.15);padding-top:10px}
+.npcol{font-family:'IM Fell English',serif;font-size:12px;color:var(--ink2);line-height:1.5;border-right:1px solid rgba(0,0,0,.1);padding-right:8px}
+.npcol:last-child{border-right:none}
+.npclabel{font-family:'Special Elite',cursive;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--red);display:block;margin-bottom:3px}
+.npst-i{position:absolute;top:18px;right:18px;font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:3px;color:#1a6e3c;border:2px solid #1a6e3c;padding:3px 9px;transform:rotate(10deg);opacity:.7}
+.npst-e{position:absolute;top:18px;right:18px;font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:3px;color:var(--red);border:2px solid var(--red);padding:3px 9px;transform:rotate(-10deg);opacity:.7}
+.npind{margin-top:14px;padding-top:10px;border-top:1px dashed rgba(0,0,0,.2)}
+.npilabel{font-family:'Special Elite',cursive;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--faded);margin-bottom:5px}
+.npitrack{height:6px;background:rgba(0,0,0,.1);border-radius:3px;overflow:hidden;margin-bottom:4px}
+.npifill{height:100%;border-radius:3px;width:0;transition:width 1.5s cubic-bezier(.23,1,.32,1)}
+.npi-i{background:#1a6e3c}.npi-e{background:var(--red)}
+
+/* ======================== TIMELINE ======================== */
+#timeline{padding:80px 40px;background:linear-gradient(180deg,#1a1208,#0f0c08)}
+.tlboard{position:relative;padding:40px 0}
+.tlstring{position:absolute;top:50%;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent 0%,var(--string) 5%,var(--string) 95%,transparent 100%);transform:translateY(-50%);box-shadow:0 0 6px rgba(192,57,43,.4);z-index:1}
+.tltrack{display:flex;gap:0;overflow-x:auto;padding:60px 20px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;position:relative;z-index:2}
+.tltrack::-webkit-scrollbar{height:4px}
+.tltrack::-webkit-scrollbar-track{background:rgba(242,232,213,.1)}
+.tltrack::-webkit-scrollbar-thumb{background:var(--red);border-radius:2px}
+.tli{flex:0 0 210px;scroll-snap-align:start;display:flex;flex-direction:column;align-items:center;position:relative;padding:0 8px}
+.tli:nth-child(odd){flex-direction:column-reverse}
+.tli:nth-child(odd) .tlc{margin-top:10px;margin-bottom:0}
+.tli:nth-child(even) .tlc{margin-bottom:10px;margin-top:0}
+.tldot{width:14px;height:14px;background:var(--red);border-radius:50%;border:3px solid #0f0c08;box-shadow:0 0 0 2px var(--red);flex-shrink:0;z-index:2}
+.tlv{width:1px;flex:1;min-height:28px;border-left:1px dashed rgba(192,57,43,.5)}
+.tlc{background:var(--cream);padding:12px 14px;width:185px;box-shadow:0 6px 20px rgba(0,0,0,.5);transition:transform .3s,box-shadow .3s;position:relative}
+.tlc:hover{transform:scale(1.06);box-shadow:0 14px 40px rgba(0,0,0,.6)}
+.tly{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--red);letter-spacing:2px;line-height:1;margin-bottom:5px}
+.tltitle{font-family:'Playfair Display',serif;font-size:12px;font-weight:700;color:var(--ink);margin-bottom:5px;line-height:1.3}
+.tldesc{font-family:'IM Fell English',serif;font-style:italic;font-size:11px;color:var(--ink2);line-height:1.5}
+.tlimg{width:100%;height:75px;object-fit:cover;display:block;margin-bottom:8px;filter:sepia(.5) contrast(1.05)}
+
+/* ======================== CONCLUSION ======================== */
+#conclusion{padding:80px 40px 120px;background:radial-gradient(ellipse at 30% 50%,rgba(80,50,10,.3) 0%,transparent 60%),linear-gradient(180deg,#0f0c08,#1a1208)}
+.concl-inner{max-width:940px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+.photostack{position:relative;height:400px}
+.csp{position:absolute;background:var(--cream);padding:7px 7px 38px 7px;box-shadow:0 12px 40px rgba(0,0,0,.6)}
+.csp img{width:100%;height:100%;object-fit:cover;display:block;filter:sepia(.4) contrast(1.05)}
+.cspcap{text-align:center;font-family:'Permanent Marker',cursive;font-size:10px;color:var(--ink2);margin-top:5px}
+.p1c{width:210px;height:260px;bottom:0;left:30px;transform:rotate(-8deg);z-index:1}
+.p2c{width:195px;height:245px;bottom:55px;left:65px;transform:rotate(5deg);z-index:2}
+.p3c{width:175px;height:225px;bottom:110px;left:95px;transform:rotate(-3deg);z-index:3}
+.cq{font-family:'Playfair Display',serif;font-size:clamp(18px,2.3vw,26px);font-style:italic;color:var(--paper);line-height:1.6;margin:22px 0 28px;padding-left:22px;border-left:3px solid var(--red)}
+.cannot{font-family:'Permanent Marker',cursive;font-size:13px;color:var(--faded);transform:rotate(-2deg);display:inline-block;margin-bottom:26px;opacity:.8}
+.qcard{background:var(--cream);padding:22px;box-shadow:0 12px 40px rgba(0,0,0,.5);transform:rotate(.5deg);position:relative}
+.qtitle{font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:var(--ink);margin-bottom:14px;line-height:1.4}
+.qopts{display:flex;flex-direction:column;gap:7px}
+.qbtn{background:none;border:1px solid rgba(100,80,50,.4);padding:9px 12px;font-family:'Special Elite',cursive;font-size:11px;color:var(--ink2);cursor:pointer;text-align:left;transition:all .2s;letter-spacing:.5px}
+.qbtn:hover{background:rgba(200,25,44,.08);border-color:var(--red);color:var(--ink)}
+.qbtn.sel{background:rgba(200,25,44,.12);border-color:var(--red);color:var(--red)}
+.qfb{margin-top:12px;font-family:'IM Fell English',serif;font-style:italic;font-size:12px;color:var(--ink2);min-height:36px;border-top:1px dashed rgba(100,80,50,.3);padding-top:8px;opacity:0;transition:opacity .4s}
+.qfb.show{opacity:1}
+.ctabtn{display:inline-flex;align-items:center;gap:10px;margin-top:22px;padding:13px 30px;background:var(--red);color:white;font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:3px;border:none;cursor:pointer;box-shadow:0 6px 20px rgba(200,25,44,.4);transition:all .3s;text-decoration:none}
+.ctabtn:hover{background:var(--red2);transform:translateY(-2px);box-shadow:0 12px 32px rgba(200,25,44,.5)}
+
+/* FOOTER */
+footer{background:rgba(0,0,0,.6);border-top:1px solid rgba(242,232,213,.1);padding:26px 40px;text-align:center;font-family:'Special Elite',cursive;font-size:10px;letter-spacing:2px;color:var(--faded);text-transform:uppercase;position:relative;z-index:1}
+
+/* MODAL */
+#moverlay{position:fixed;inset:0;background:rgba(10,8,4,.9);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s;backdrop-filter:blur(4px)}
+#moverlay.active{opacity:1;visibility:visible}
+.mbox{background:var(--paper);max-width:720px;width:100%;max-height:90vh;overflow-y:auto;position:relative;transform:scale(.9) translateY(20px);transition:transform .4s cubic-bezier(.23,1,.32,1);box-shadow:0 40px 120px rgba(0,0,0,.9)}
+#moverlay.active .mbox{transform:scale(1) translateY(0)}
+.mimg{width:100%;height:240px;object-fit:cover;display:block;filter:sepia(.3) contrast(1.1)}
+.mbody{padding:26px 34px 34px}
+.mkick{font-family:'Special Elite',cursive;font-size:9px;letter-spacing:4px;text-transform:uppercase;color:var(--red);border-bottom:1px solid var(--red);display:inline-block;padding-bottom:2px;margin-bottom:10px}
+.mtitle{font-family:'Playfair Display',serif;font-size:26px;font-weight:900;color:var(--ink);line-height:1.2;margin-bottom:14px}
+.mtext{font-family:'IM Fell English',serif;font-size:15px;color:var(--ink2);line-height:1.8;column-count:2;column-gap:22px;column-rule:1px solid rgba(100,80,50,.2)}
+.mtext p{margin-bottom:10px}
+.mtext strong{color:var(--ink);font-weight:700}
+.mfacts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px;padding-top:18px;border-top:1px solid rgba(100,80,50,.2)}
+.mfact{background:rgba(100,80,50,.07);padding:10px 12px;border-left:3px solid var(--red)}
+.mflabel{font-family:'Special Elite',cursive;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--faded);margin-bottom:3px}
+.mfval{font-family:'Playfair Display',serif;font-size:13px;font-weight:700;color:var(--ink)}
+.mclose{position:absolute;top:10px;right:14px;background:var(--red);color:white;border:none;width:28px;height:28px;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s;z-index:5}
+.mclose:hover{background:var(--ink)}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--cork2)}
+::-webkit-scrollbar-thumb{background:var(--red);border-radius:2px}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .nlinks{display:none}.nburg{display:flex}
+  .cboard{grid-template-columns:1fr 1fr;grid-auto-rows:auto}
+  #ci,#ce,#cd,#ciq,#col,#ccr{grid-column:span 1!important;grid-row:auto!important;transform:none!important}
+  #ck{grid-column:span 2!important;grid-row:auto!important;transform:none!important}
+  #cn1,#cn2,#cn3{display:none}
+  .cmpwrap{grid-template-columns:1fr}
+  .concl-inner{grid-template-columns:1fr}
+  .photostack{display:none}
+  .mtext{column-count:1}
+}
+@media(max-width:600px){
+  nav{padding:12px 20px}
+  #collage,#comparativa,#timeline,#conclusion{padding:60px 20px}
+  .cboard{grid-template-columns:1fr}
+  #ck{grid-column:1!important}
+  .herot{font-size:36px}
+}
+</style>
+</head>
+<body>
+
+<div id="pb"></div>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="ld-title">¿Por qué fracasan?</div>
+  <div class="ld-bar"></div>
+  <div class="ld-sub">Preparando infografía</div>
+</div>
+
+<!-- MOBILE NAV -->
+<div class="mnav" id="mnav">
+  <button class="mnclose" id="mnc">✕</button>
+  <a href="#collage" onclick="cMN()">Conceptos</a>
+  <a href="#comparativa" onclick="cMN()">Comparativa</a>
+  <a href="#timeline" onclick="cMN()">Historia</a>
+  <a href="#conclusion" onclick="cMN()">Conclusión</a>
+</div>
+
+<!-- NAV -->
+<nav>
+  <a href="#hero" class="nlogo">¿Por qué fracasan los países?</a>
+  <ul class="nlinks">
+    <li><a href="#collage">Conceptos</a></li>
+    <li><a href="#comparativa">Comparativa</a></li>
+    <li><a href="#timeline">Historia</a></li>
+    <li><a href="#conclusion">Conclusión</a></li>
+  </ul>
+  <button class="nburg" id="nb"><span></span><span></span><span></span></button>
+</nav>
+
+<!-- ===================== HERO ===================== -->
+<section id="hero">
+  <svg class="hero-strings" xmlns="http://www.w3.org/2000/svg">
+    <line x1="8%" y1="25%" x2="42%" y2="58%" stroke="rgba(192,57,43,.2)" stroke-width="1" stroke-dasharray="4,6"/>
+    <line x1="72%" y1="18%" x2="52%" y2="62%" stroke="rgba(192,57,43,.15)" stroke-width="1" stroke-dasharray="3,8"/>
+    <line x1="88%" y1="72%" x2="56%" y2="52%" stroke="rgba(192,57,43,.18)" stroke-width="1" stroke-dasharray="5,5"/>
+    <line x1="18%" y1="82%" x2="46%" y2="57%" stroke="rgba(192,57,43,.15)" stroke-width="1" stroke-dasharray="4,7"/>
+    <circle cx="8%" cy="25%" r="3" fill="rgba(192,57,43,.4)"/>
+    <circle cx="88%" cy="72%" r="3" fill="rgba(192,57,43,.4)"/>
+  </svg>
+
+  <!-- Scattered mini polaroids -->
+  <div class="hero-scatter">
+    <div class="spol reveal" style="top:15%;left:5%;transform:rotate(-7deg);width:115px;">
+      <img src="https://picsum.photos/seed/parliament/220/160" style="width:105px;height:75px;">
+      <div class="scap">Parlamento</div>
+    </div>
+    <div class="spol reveal" style="top:12%;right:6%;transform:rotate(9deg);width:110px;">
+      <img src="https://picsum.photos/seed/slums/200/155" style="width:100px;height:70px;">
+      <div class="scap">Desigualdad</div>
+    </div>
+    <div class="spol reveal" style="bottom:18%;left:4%;transform:rotate(5deg);width:105px;">
+      <img src="https://picsum.photos/seed/courthouse/200/150" style="width:95px;height:68px;">
+      <div class="scap">Instituciones</div>
+    </div>
+    <div class="spol reveal" style="bottom:22%;right:5%;transform:rotate(-6deg);width:110px;">
+      <img src="https://picsum.photos/seed/wall1989/210/155" style="width:100px;height:70px;">
+      <div class="scap">Muro de Berlín</div>
+    </div>
+    <div class="spol reveal" style="top:50%;left:3%;transform:rotate(3deg);width:100px;display:none;">
+      <img src="https://picsum.photos/seed/seoul2/200/148" style="width:90px;height:65px;">
+      <div class="scap">Seúl</div>
+    </div>
+  </div>
+
+  <div class="hero-inner reveal">
+    <!-- Book polaroid -->
+    <div class="book-pol" style="transition:.4s">
+      <div class="pin pin-r"></div>
+      <div class="tape" style="width:65px;top:-11px;left:50%;transform:translateX(-50%);"></div>
+      <img src="https://picsum.photos/seed/library/460/560" alt="Libro">
+      <div class="bpcap">¿Por qué fracasan los países?<br>Acemoglu · Robinson</div>
+      <div class="hero-badge">2012</div>
+      <div class="stamp" style="bottom:52px;right:-16px;font-size:12px;">Esencial</div>
+    </div>
+
+    <p style="font-family:'Special Elite',cursive;font-size:10px;letter-spacing:5px;text-transform:uppercase;color:var(--faded);margin-bottom:12px">Infografía Interactiva · Collage</p>
+    <h1 class="herot">¿Por qué <span class="hl">fracasan</span><br>los países?</h1>
+    <div class="hdiv"></div>
+    <p class="hauth">Daron Acemoglu &amp; James A. Robinson</p>
+    <blockquote class="hquote">
+      "Las naciones fracasan porque sus instituciones económicas extractivas no crean los incentivos necesarios para que la gente ahorre, invierta e innove."
+    </blockquote>
+  </div>
+
+  <div class="scrollhint" onclick="document.getElementById('collage').scrollIntoView({behavior:'smooth'})">
+    <div class="sarrow"></div>
+    <span>Explorar</span>
+  </div>
+</section>
+
+<!-- ===================== COLLAGE ===================== -->
+<section id="collage">
+  <div style="max-width:1280px;margin:0 auto;">
+    <div class="cb-header">
+      <div>
+        <p class="slabel reveal">— conceptos clave —</p>
+        <h2 class="stitle reveal">EL TABLERO<br>DE EVIDENCIAS</h2>
+        <p class="ssub reveal">Haz clic en cualquier pieza para leer el expediente completo</p>
+      </div>
+      <div class="cb-note reveal">"La diferencia entre éxito y fracaso no es el destino — son las reglas del juego"</div>
+    </div>
+
+    <!-- SVG string connections -->
+    <svg class="board-strings" style="position:absolute;inset:0;width:100%;height:100%" xmlns="http://www.w3.org/2000/svg">
+      <path d="M 180,160 Q 380,110 550,190" stroke="rgba(192,57,43,.3)" stroke-width="1.5" fill="none" stroke-dasharray="6,4"/>
+      <path d="M 560,190 Q 720,130 870,165" stroke="rgba(192,57,43,.25)" stroke-width="1.5" fill="none" stroke-dasharray="5,5"/>
+      <path d="M 180,430 Q 480,360 620,400" stroke="rgba(192,57,43,.28)" stroke-width="1.5" fill="none" stroke-dasharray="6,4"/>
+      <path d="M 870,420 Q 950,480 910,560" stroke="rgba(192,57,43,.22)" stroke-width="1.5" fill="none" stroke-dasharray="4,6"/>
+      <circle cx="180" cy="160" r="4" fill="rgba(192,57,43,.45)"/>
+      <circle cx="550" cy="190" r="4" fill="rgba(192,57,43,.45)"/>
+      <circle cx="870" cy="165" r="4" fill="rgba(192,57,43,.45)"/>
+      <circle cx="180" cy="430" r="4" fill="rgba(192,57,43,.45)"/>
+      <circle cx="620" cy="400" r="4" fill="rgba(192,57,43,.45)"/>
+    </svg>
+
+    <div class="cboard">
+
+      <!-- 1. INCLUSIVE INSTITUTIONS -->
+      <div class="cc pol reveal" id="ci" data-concept="inclusive" style="align-self:start">
+        <div class="pin pin-gr"></div>
+        <div class="tape" style="width:55px;top:-11px;left:50%;transform:translateX(-50%) rotate(-3deg);"></div>
+        <img src="https://picsum.photos/seed/parliament/480/300" style="height:190px;filter:sepia(.3) contrast(1.05);">
+        <p class="polcap">Instituciones<br>Inclusivas ⚖️</p>
+        <div class="stamp" style="bottom:46px;right:-10px;font-size:11px;transform:rotate(12deg)">Positivo</div>
+      </div>
+
+      <!-- 2. EXTRACTIVE INSTITUTIONS -->
+      <div class="cc nc reveal" id="ce" data-concept="extractive" style="align-self:start">
+        <div class="pin pin-r" style="left:30%;transform:translateX(-30%)"></div>
+        <div class="kick">⛓️ análisis político</div>
+        <div class="nch">Instituciones Extractivas: el mecanismo del fracaso</div>
+        <img src="https://picsum.photos/seed/chains/420/200" style="width:100%;height:120px;object-fit:cover;display:block;margin-bottom:10px;filter:sepia(.55);">
+        <p class="ncb">Diseñadas para extraer riqueza de la mayoría hacia una élite reducida. No incentivan la innovación — la bloquean activamente.</p>
+        <div class="stamp" style="bottom:16px;right:8px;font-size:10px;transform:rotate(-8deg)">Causa</div>
+      </div>
+
+      <!-- 3. ECONOMIC DEVELOPMENT -->
+      <div class="cc pov reveal" id="cd" data-concept="economic" style="height:490px;align-self:start">
+        <div class="pin pin-g" style="left:65%;transform:translateX(-65%)"></div>
+        <div class="tape" style="width:55px;top:-11px;right:20px;transform:rotate(6deg);"></div>
+        <img src="https://picsum.photos/seed/skyscraper/560/700" style="filter:sepia(.2) contrast(1.15);">
+        <div class="povl">Desarrollo<br>Económico 📈<div class="povs">No es geografía. Son las instituciones.</div></div>
+      </div>
+
+      <!-- NOTE 1 -->
+      <div class="cc nte nte-y reveal" id="cn1" style="align-self:center">
+        <div class="pin pin-w"></div>
+        <div class="nt">Nota del autor</div>
+        <div class="nb">"El crecimiento bajo extractivismo es efímero. Sin destrucción creativa, no hay prosperidad duradera."</div>
+      </div>
+
+      <!-- 4. INEQUALITY -->
+      <div class="cc nc reveal" id="ciq" data-concept="inequality" style="align-self:start">
+        <div class="pin pin-b" style="left:40%;transform:translateX(-40%)"></div>
+        <div class="tape" style="width:50px;top:-11px;left:18px;transform:rotate(-5deg);"></div>
+        <img src="https://picsum.photos/seed/inequality/480/220" style="width:100%;height:145px;object-fit:cover;display:block;margin-bottom:10px;filter:sepia(.45);">
+        <div class="kick">⚡ desigualdad</div>
+        <div class="nch">El Ciclo Vicioso</div>
+        <p class="ncb">La desigualdad extrema permite capturar el sistema político, que a su vez perpetúa y profundiza la desigualdad. Un círculo que se cierra solo.</p>
+      </div>
+
+      <!-- 5. COLONIALISM -->
+      <div class="cc pol reveal" id="col" data-concept="colonialism" style="align-self:start">
+        <div class="pin pin-r" style="left:35%;transform:translateX(-35%)"></div>
+        <img src="https://picsum.photos/seed/colonial/500/280" style="height:190px;filter:sepia(.65) contrast(1.1);">
+        <p class="polcap">El legado colonial 🗺️<br>siglos que persisten hoy</p>
+        <div class="stamp" style="bottom:46px;left:6px;font-size:10px;transform:rotate(-10deg)">Archivo</div>
+      </div>
+
+      <!-- 6. CREATIVE DESTRUCTION -->
+      <div class="cc pov reveal" id="ccr" data-concept="creative" style="height:390px;align-self:start">
+        <div class="pin pin-g" style="left:20%;transform:translateX(-20%)"></div>
+        <img src="https://picsum.photos/seed/innovation/580/520" style="filter:sepia(.2) contrast(1.15);">
+        <div class="povl">Destrucción Creativa 💡<div class="povs">El tabú que las élites nunca perdonan</div></div>
+      </div>
+
+      <!-- NOTE 2 -->
+      <div class="cc nte nte-p reveal" id="cn2" style="align-self:start">
+        <div class="pin pin-w"></div>
+        <div class="nt">Schumpeter</div>
+        <div class="nb">La innovación destruye lo viejo para crear lo nuevo. Las élites temen eso — y lo bloquean.</div>
+      </div>
+
+      <!-- NOTE 3 -->
+      <div class="cc nte nte-b reveal" id="cn3" style="align-self:end">
+        <div class="pin pin-w"></div>
+        <div class="nt">América Latina</div>
+        <div class="nb">El colonialismo extractivo se perpetúa siglos después en nuevas constituciones y viejas élites.</div>
+      </div>
+
+      <!-- 7. KOREA CARD — spans full width -->
+      <div class="cc kcard reveal" id="ck" data-concept="korea" style="display:grid;grid-template-columns:1fr 1fr;align-self:start">
+        <div class="pin pin-r" style="left:25%;transform:translateX(-25%)"></div>
+        <div class="pin pin-b" style="left:75%;transform:translateX(-75%)"></div>
+        <div class="tape" style="width:55px;top:-11px;left:50%;transform:translateX(-50%);"></div>
+
+        <div style="position:relative">
+          <img src="https://picsum.photos/seed/southkorea/600/380" style="width:100%;height:220px;object-fit:cover;filter:sepia(.1) contrast(1.1);">
+          <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.75));padding:14px;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:3px;color:white">Corea del Sur ↗</div>
+        </div>
+        <div style="position:relative">
+          <img src="https://picsum.photos/seed/northkorea/600/380" style="width:100%;height:220px;object-fit:cover;filter:sepia(.55) grayscale(.4) contrast(1.05);">
+          <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.75));padding:14px;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:3px;color:#aaa">Corea del Norte ↘</div>
+        </div>
+        <div style="grid-column:1/3;padding:18px 26px;border-top:1px solid rgba(100,80,50,.2)">
+          <div style="font-family:'Playfair Display',serif;font-size:17px;font-weight:900;color:var(--ink);margin-bottom:7px">El experimento natural del siglo XX 🌐</div>
+          <p style="font-family:'IM Fell English',serif;font-style:italic;font-size:13px;color:var(--ink2);line-height:1.6">La misma nación, idioma y cultura. Un muro las separó en 1945. El Sur adoptó instituciones inclusivas — el Norte, extractivas totales. La misma gente. Instituciones distintas. Destinos opuestos.</p>
+          <div style="display:flex;gap:24px;margin-top:12px;flex-wrap:wrap">
+            <span style="font-family:'Special Elite',cursive;font-size:11px;color:var(--faded)">PIB/cápita Sur: <strong style="color:#1a6e3c">~$33,000</strong></span>
+            <span style="font-family:'Special Elite',cursive;font-size:11px;color:var(--faded)">PIB/cápita Norte: <strong style="color:var(--red)">~$1,700</strong></span>
+            <span style="font-family:'Special Elite',cursive;font-size:11px;color:var(--faded)">Diferencia: <strong style="color:var(--ink)">~20x</strong></span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== COMPARATIVA ===================== -->
+<section id="comparativa">
+  <div style="max-width:1280px;margin:0 auto">
+    <p class="slabel reveal">— comparativa —</p>
+    <h2 class="stitle reveal">DOS PORTADAS,<br>DOS MUNDOS</h2>
+    <p class="ssub reveal">Los mismos titulares — respuestas opuestas.</p>
+
+    <div class="cmpwrap">
+      <div class="np np-i reveal">
+        <div class="npst-i">Éxito</div>
+        <div class="npmast">
+          <div class="npname">THE INCLUSIVE TIMES</div>
+          <div class="npdate">Instituciones abiertas · poder distribuido · mercados libres</div>
+        </div>
+        <div class="nphl">Libre competencia y propiedad privada impulsan nuevo récord histórico de innovación</div>
+        <img src="https://picsum.photos/seed/openmarket/580/200" class="npimg" alt="">
+        <div class="npcols">
+          <div class="npcol"><span class="npclabel">Poder</span>Distribuido entre ciudadanos, partidos y controles institucionales efectivos</div>
+          <div class="npcol"><span class="npclabel">Propiedad</span>Garantizada y protegida por un Estado de derecho imparcial</div>
+          <div class="npcol"><span class="npclabel">Mercados</span>Abiertos, con libre entrada y competencia regulada</div>
+          <div class="npcol"><span class="npclabel">Resultado</span>Prosperidad amplia, innovación y movilidad social ascendente</div>
+        </div>
+        <div class="npind">
+          <div class="npilabel">Índice de prosperidad</div>
+          <div class="npitrack"><div class="npifill npi-i" data-w="82"></div></div>
+          <div style="font-family:'Special Elite',cursive;font-size:9px;color:#1a6e3c;text-align:right">82 / 100</div>
+        </div>
+      </div>
+
+      <div class="np np-e reveal">
+        <div class="npst-e">Fracaso</div>
+        <div class="npmast">
+          <div class="npname">THE EXTRACTIVE GAZETTE</div>
+          <div class="npdate">Órgano oficial · élite en el poder · control total</div>
+        </div>
+        <div class="nphl">Élite consolida monopolios y bloquea tecnología que amenaza su posición de poder</div>
+        <img src="https://picsum.photos/seed/industry/580/200" class="npimg" alt="" style="filter:sepia(.7) grayscale(.4) contrast(1.1);">
+        <div class="npcols">
+          <div class="npcol"><span class="npclabel">Poder</span>Concentrado en una élite que perpetúa su control político indefinidamente</div>
+          <div class="npcol"><span class="npclabel">Propiedad</span>Arbitraria, expropiable, sin garantías legales reales para ciudadanos</div>
+          <div class="npcol"><span class="npclabel">Mercados</span>Monopolios, barreras de entrada y corrupción estructural normalizada</div>
+          <div class="npcol"><span class="npclabel">Resultado</span>Riqueza para pocos, pobreza generalizada y colapso a largo plazo</div>
+        </div>
+        <div class="npind">
+          <div class="npilabel">Índice de prosperidad</div>
+          <div class="npitrack"><div class="npifill npi-e" data-w="24"></div></div>
+          <div style="font-family:'Special Elite',cursive;font-size:9px;color:var(--red);text-align:right">24 / 100</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TIMELINE ===================== -->
+<section id="timeline">
+  <div style="max-width:1280px;margin:0 auto">
+    <p class="slabel reveal">— línea del tiempo —</p>
+    <h2 class="stitle reveal">MOMENTOS QUE<br>DEFINIERON NACIONES</h2>
+    <p class="ssub reveal">Desliza para recorrer los puntos de inflexión del libro. →</p>
+
+    <div class="tlboard reveal">
+      <div class="tlstring"></div>
+      <div class="tltrack">
+
+        <div class="tli">
+          <div class="tlc">
+            <div class="pin pin-r" style="position:absolute;top:-7px;left:50%;transform:translateX(-50%)"></div>
+            <img src="https://picsum.photos/seed/castle1215/370/150" class="tlimg">
+            <div class="tly">1215</div>
+            <div class="tltitle">La Carta Magna</div>
+            <p class="tldesc">Primera limitación del poder monárquico. Semilla del Estado de derecho.</p>
+          </div>
+          <div class="tlv"></div><div class="tldot"></div>
+        </div>
+
+        <div class="tli">
+          <div class="tldot"></div><div class="tlv"></div>
+          <div class="tlc">
+            <div class="pin pin-g" style="position:absolute;top:-7px;left:50%;transform:translateX(-50%)"></div>
+            <img src="https://picsum.photos/seed/colonial1492/370/150" class="tlimg">
+            <div class="tly">1492</div>
+            <div class="tltitle">La Conquista de América</div>
+            <p class="tldesc">España impone encomienda y mita. El destino de América Latina queda sellado.</p>
+          </div>
+        </div>
+
+        <div class="tli">
+          <div class="tlc">
+            <div class="pin pin-b" style="position:absolute;top:-7px;left:50%;transform:translateX(-50%)"></div>
+            <img src="https://picsum.photos/seed/england1688/370/150" class="tlimg">
+            <div class="tly">1688</div>
+            <div class="tltitle">Revolución Gloriosa</div>
+            <p class="tldesc">El Parlamento inglés limita al rey. Base de la Revolución Industrial.</p>
+          </div>
+          <div class="tlv"></div><div class="tldot"></div>
+        </div>
+
+        <div class="tli">
+          <div class="tldot"></div><div class="tlv"></div>
+          <div class="tlc">
+            <div class="pin pin-gr" style="position:absolute;top:-7px;left:50%;transform:translateX(-50%)"></div>
+            <img src="https://picsum.photos/seed/america1776/370/150" class="tlimg">
+            <div class="tly">1776</div>
+            <div class="tltitle">Independencia de EE.UU.</div>
+            <p class="tldesc">Separación de poderes y derechos individuales: base del desarrollo más poderoso.</p>
+          </div>
+        </div>
+
+        <div class="tli">
+          <div class="tlc">
+            <div class="pin pin-r" style="position:absolute;top:-7px;left:50%;transform:translateX(-50%)"></div>
+            <img src="https://picsum.photos/seed/korea1945/370/150" class="tlimg">
+            <div class="tly">1945</div>
+            <div class="tltitle">División de Corea</div>
+            <p class="tldesc">El paralelo 38 crea el experimento natural más poderoso de las ciencias sociales.</p>
+          </div>
+          <div class="tlv"></div><div class="tldot"></div>
+        </div>
+
+        <div class="tli">
+          <div class="tldot"></div><div class="tlv"></div>
+          <div class="tlc">
+            <div class="pin pin-w" style="position:absolute;top:-7px;left:50%;transform:translateX(-50%)"></div>
+            <img src="https://picsum.photos/seed/berlin1989/370/150" class="tlimg">
+            <div class="tly">1989</div>
+            <div class="tltitle">Caída del Muro de Berlín</div>
+            <p class="tldesc">La prueba más visible del fracaso extractivo frente al modelo inclusivo.</p>
+          </div>
+        </div>
+
+        <div class="tli">
+          <div class="tlc">
+            <div class="pin pin-g" style="position:absolute;top:-7px;left:50%;transform:translateX(-50%)"></div>
+            <img src="https://picsum.photos/seed/arabspring/370/150" class="tlimg">
+            <div class="tly">2010</div>
+            <div class="tltitle">Primavera Árabe</div>
+            <p class="tldesc">Levantamientos que ilustran cómo las instituciones extractivas profundas resisten el cambio.</p>
+          </div>
+          <div class="tlv"></div><div class="tldot"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CONCLUSION ===================== -->
+<section id="conclusion">
+  <div style="max-width:1280px;margin:0 auto">
+    <div class="concl-inner">
+
+      <div class="photostack reveal">
+        <div class="csp p1c">
+          <img src="https://picsum.photos/seed/poverty1/380/480" alt="">
+          <div class="cspcap">Pobreza — no es destino</div>
+        </div>
+        <div class="csp p2c">
+          <img src="https://picsum.photos/seed/community1/360/445" alt="">
+          <div class="cspcap">Comunidad — fuerza colectiva</div>
+        </div>
+        <div class="csp p3c">
+          <img src="https://picsum.photos/seed/future1/340/420" alt="">
+          <div class="cspcap">Futuro — depende de nosotros</div>
+        </div>
+        <div class="stamp" style="position:absolute;bottom:75px;right:16px;font-size:15px">Urgente</div>
+      </div>
+
+      <div>
+        <p class="slabel reveal">— reflexión final —</p>
+        <h2 class="stitle reveal">EL FUTURO<br>NO ESTÁ<br>ESCRITO</h2>
+        <blockquote class="cq reveal">
+          "Los países no fracasan por su geografía ni su cultura. Fracasan porque pequeños grupos con poder político no quieren que prosperen."
+        </blockquote>
+        <p class="cannot reveal">— Acemoglu &amp; Robinson, 2012</p>
+
+        <div class="qcard reveal">
+          <div class="pin pin-r"></div>
+          <div class="tape" style="width:50px;top:-11px;left:50%;transform:translateX(-50%);"></div>
+          <div class="qtitle">¿Cuál es el mayor obstáculo para construir instituciones inclusivas?</div>
+          <div class="qopts">
+            <button class="qbtn" onclick="pick(this,'e')">Élites que resisten el cambio</button>
+            <button class="qbtn" onclick="pick(this,'c')">Cultura política heredada</button>
+            <button class="qbtn" onclick="pick(this,'d')">Desigualdad económica estructural</button>
+            <button class="qbtn" onclick="pick(this,'x')">Presiones externas e históricas</button>
+          </div>
+          <div class="qfb" id="qfb"></div>
+        </div>
+
+        <a href="#" class="ctabtn reveal" onclick="return false">
+          <span>Explorar el libro</span><span>→</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  Infografía interactiva · ¿Por qué fracasan los países? — Acemoglu &amp; Robinson · 2012 · Imágenes: Unsplash
+</footer>
+
+<!-- MODAL -->
+<div id="moverlay" onclick="cOv(event)">
+  <div class="mbox">
+    <button class="mclose" onclick="cM()">✕</button>
+    <img id="mi" class="mimg" src="" alt="">
+    <div class="mbody">
+      <div id="mk" class="mkick"></div>
+      <h3 id="mt" class="mtitle"></h3>
+      <div id="mb" class="mtext"></div>
+      <div id="mf" class="mfacts"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* DATA */
+const D = {
+  inclusive:{
+    img:'https://picsum.photos/seed/parliament/720/300',
+    k:'⚖️ Instituciones Inclusivas',t:'El motor de la prosperidad sostenida',
+    b:`<p>Las <strong>instituciones económicas inclusivas</strong> permiten a la gran mayoría participar plenamente en la economía, aprovechando sus talentos y habilidades.</p>
+       <p>Se caracterizan por la <strong>protección de los derechos de propiedad</strong>, la existencia de un sistema legal imparcial, la libre entrada a los mercados y servicios públicos que nivelan el campo de juego.</p>
+       <p>Las instituciones políticas inclusivas —democracia pluralista, Estado de derecho, separación de poderes— son necesarias para sostener las económicas. El éxito de Corea del Sur y Gran Bretaña son los ejemplos centrales.</p>`,
+    f:[{l:'Ejemplos',v:'EE.UU., Corea del Sur, Suecia'},{l:'Crecimiento',v:'Sostenido a largo plazo'},{l:'Clave política',v:'Pluralismo y distribución del poder'},{l:'Resultado',v:'Prosperidad amplia e innovación'}]
+  },
+  extractive:{
+    img:'https://picsum.photos/seed/chains/720/300',
+    k:'⛓️ Instituciones Extractivas',t:'El mecanismo central del fracaso',
+    b:`<p>Las <strong>instituciones extractivas</strong> están diseñadas para extraer riqueza de la mayoría y beneficiar a una élite reducida. Pueden generar crecimiento temporal, pero no sostenido.</p>
+       <p>El círculo vicioso: las élites usan el poder político para mantener estas instituciones, que a su vez perpetúan su poder. <strong>No incentivan la innovación — la bloquean</strong>, pues amenazaría los monopolios existentes.</p>
+       <p>La URSS creció décadas bajo extractivismo, pero al agotar los recursos que podía reasignar, colapsó. Sin creación genuina, solo redistribución forzada.</p>`,
+    f:[{l:'Ejemplos históricos',v:'URSS, Venezuela, Corea del Norte'},{l:'Crecimiento',v:'Posible pero efímero'},{l:'Característica',v:'Concentración del poder'},{l:'Resultado',v:'Colapso a largo plazo'}]
+  },
+  economic:{
+    img:'https://picsum.photos/seed/skyscraper/720/300',
+    k:'📈 Desarrollo Económico',t:'No es geografía. Son las instituciones.',
+    b:`<p>El argumento central del libro desafía la visión convencional. <strong>Las instituciones son el factor determinante</strong> del desarrollo — no la geografía, el clima ni la cultura.</p>
+       <p>El libro refuta a Jared Diamond y Jeffrey Sachs mostrando cómo ciudades divididas por fronteras —<strong>Nogales Arizona vs Nogales Sonora</strong>— tienen radicalmente diferentes niveles de desarrollo con exactamente la misma geografía.</p>
+       <p>El desarrollo genuino requiere que los individuos puedan innovar, invertir y asumir riesgos con la certeza de que sus ganancias serán protegidas.</p>`,
+    f:[{l:'Factor determinante',v:'Instituciones, no geografía'},{l:'Caso paradigmático',v:'Nogales Arizona vs Sonora'},{l:'Condición necesaria',v:'Propiedad privada garantizada'},{l:'Refuta a',v:'Diamond, Sachs y la tesis climática'}]
+  },
+  inequality:{
+    img:'https://picsum.photos/seed/inequality/720/300',
+    k:'⚡ Desigualdad',t:'El ciclo que se retroalimenta solo',
+    b:`<p>La desigualdad no es solo consecuencia del fracaso institucional: <strong>es también su causa</strong>. El círculo vicioso: la desigualdad extrema permite que las élites capturen el sistema político, perpetuando y profundizando la desigualdad.</p>
+       <p>América Latina es el caso de estudio más amplio. Las estructuras coloniales de desigualdad —latifundios, castas, mita— se perpetuaron en las constituciones republicanas con nuevas etiquetas pero las mismas élites.</p>
+       <p>Romper este ciclo requiere un <strong>cambio político genuino</strong>: redistribución del poder que precede a cualquier redistribución económica sostenible.</p>`,
+    f:[{l:'Región más afectada',v:'América Latina'},{l:'Mecanismo',v:'Captura del Estado por élites'},{l:'Solución',v:'Redistribución del poder político'},{l:'Patrón',v:'Ciclo auto-reforzante'}]
+  },
+  colonialism:{
+    img:'https://picsum.photos/seed/colonial/720/300',
+    k:'🗺️ Colonialismo',t:'Un legado de siglos que persiste',
+    b:`<p>El colonialismo europeo no fue uniforme. La "<strong>tesis de los colonizadores reversos</strong>" explica por qué algunas excolonias prosperan y otras no: el tipo de institución trasplantada dependía de la rentabilidad del territorio.</p>
+       <p>Donde las condiciones eran mortales para los europeos (trópicos africanos, Caribe), se establecieron instituciones de extracción masiva. Donde podían vivir (Nueva Inglaterra, Australia), trasplantaron instituciones más inclusivas.</p>
+       <p>Esta diferencia inicial se amplificó con el tiempo: <strong>pequeñas diferencias institucionales</strong> en el momento de la independencia generaron enormes divergencias de desarrollo siglos después.</p>`,
+    f:[{l:'Variable clave',v:'Mortalidad de colonizadores'},{l:'Países analizados',v:'64 excolonias'},{l:'Persistencia',v:'200–400 años'},{l:'Tesis original',v:'Acemoglu, Johnson & Robinson (2001)'}]
+  },
+  creative:{
+    img:'https://picsum.photos/seed/innovation/720/300',
+    k:'💡 Destrucción Creativa',t:'El tabú que las élites nunca perdonan',
+    b:`<p>Acemoglu y Robinson toman el concepto de <strong>Joseph Schumpeter</strong> para explicar el corazón del conflicto político-económico. La innovación destruye negocios establecidos para crear nuevas industrias — amenazando a quienes ya tienen el poder.</p>
+       <p>El ejemplo más dramático: cuando los ferrocarriles llegaron a Europa Oriental, los terratenientes que vivían del comercio en caravanas <strong>bloquearon su construcción durante décadas</strong>.</p>
+       <p>Las élites económicas usan su poder político para detener la innovación que amenaza su posición. Esta es la razón estructural por la que el extractivismo no solo crea pobreza, sino que la perpetúa activamente.</p>`,
+    f:[{l:'Concepto original',v:'Joseph Schumpeter'},{l:'Amenaza para',v:'Las élites establecidas'},{l:'Ejemplo clásico',v:'Ferrocarriles en Europa del Este'},{l:'Consecuencia',v:'Bloqueo sistemático a la innovación'}]
+  },
+  korea:{
+    img:'https://picsum.photos/seed/southkorea/720/300',
+    k:'🌐 Caso Histórico: Las dos Coreas',t:'El experimento natural más poderoso del siglo XX',
+    b:`<p>En 1945, Corea era una sola nación con la misma lengua, cultura, religión, historia y geografía. La división en el paralelo 38 creó un laboratorio involuntario de teoría institucional que aún dura hoy.</p>
+       <p><strong>Corea del Sur</strong> desarrolló instituciones inclusivas gradualmente — con tropiezos — pero con mercados competitivos y derechos de propiedad que incentivaron inversión e innovación. Hoy su PIB per cápita supera los 33,000 USD.</p>
+       <p><strong>Corea del Norte</strong> instaló un sistema extractivo total bajo los Kim. No existen derechos de propiedad privada y la innovación está implícitamente prohibida. <strong>La misma gente, el mismo lugar. Instituciones radicalmente distintas. Destinos opuestos.</strong></p>`,
+    f:[{l:'PIB per cápita — Sur',v:'~$33,000 USD'},{l:'PIB per cápita — Norte',v:'~$1,700 USD'},{l:'División',v:'1945 — Paralelo 38'},{l:'Diferencia',v:'~20 veces más rico el Sur'}]
+  }
+};
+
+function oM(k){
+  const d=D[k];if(!d)return;
+  document.getElementById('mi').src=d.img;
+  document.getElementById('mk').textContent=d.k;
+  document.getElementById('mt').textContent=d.t;
+  document.getElementById('mb').innerHTML=d.b;
+  document.getElementById('mf').innerHTML=d.f.map(f=>`<div class="mfact"><div class="mflabel">${f.l}</div><div class="mfval">${f.v}</div></div>`).join('');
+  document.getElementById('moverlay').classList.add('active');
+  document.body.style.overflow='hidden';
+}
+function cM(){document.getElementById('moverlay').classList.remove('active');document.body.style.overflow='';}
+function cOv(e){if(e.target===document.getElementById('moverlay'))cM();}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')cM();});
+document.querySelectorAll('[data-concept]').forEach(el=>{
+  el.addEventListener('click',()=>oM(el.dataset.concept));
+});
+
+/* LOADER */
+window.addEventListener('load',()=>setTimeout(()=>document.getElementById('loader').classList.add('gone'),1800));
+
+/* PROGRESS */
+window.addEventListener('scroll',()=>{
+  const s=window.scrollY,h=document.documentElement.scrollHeight-window.innerHeight;
+  document.getElementById('pb').style.width=(h>0?s/h*100:0)+'%';
+});
+
+/* REVEAL */
+const ro=new IntersectionObserver(entries=>{
+  entries.forEach((e,i)=>{
+    if(e.isIntersecting){setTimeout(()=>e.target.classList.add('in'),(e.target.dataset.d||0)*110);ro.unobserve(e.target);}
+  });
+},{threshold:.1});
+document.querySelectorAll('.reveal').forEach((el,i)=>{el.dataset.d=i%5;ro.observe(el);});
+
+/* BARS */
+const bo=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      document.querySelectorAll('.npifill').forEach(b=>b.style.width=b.dataset.w+'%');
+      bo.disconnect();
+    }
+  });
+},{threshold:.3});
+const cs=document.querySelector('.cmpwrap');if(cs)bo.observe(cs);
+
+/* QUESTION */
+const ANS={
+  e:'Exacto. Acemoglu y Robinson muestran que las élites con poder son el principal freno — tienen los recursos para bloquear cualquier reforma real.',
+  c:'Válido, pero el libro argumenta que la cultura es más consecuencia que causa. Las culturas "fatalistas" fueron moldeadas por siglos de extracción sistemática.',
+  d:'Totalmente acertado. La desigualdad extrema da a las élites el capital político para perpetuar las instituciones que las benefician, cerrando el ciclo vicioso.',
+  x:'El colonialismo y las presiones externas son factores reales analizados con profundidad. Sin embargo, Acemoglu y Robinson argumentan que las fuerzas internas son más determinantes.'
+};
+function pick(btn,k){
+  document.querySelectorAll('.qbtn').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');
+  const f=document.getElementById('qfb');
+  f.textContent=ANS[k];f.classList.add('show');
+}
+
+/* NAV */
+document.getElementById('nb').addEventListener('click',()=>{document.getElementById('mnav').classList.add('open');document.body.style.overflow='hidden';});
+document.getElementById('mnc').addEventListener('click',cMN);
+function cMN(){document.getElementById('mnav').classList.remove('open');document.body.style.overflow='';}
+
+/* SMOOTH SCROLL */
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{const t=document.querySelector(a.getAttribute('href'));if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth'});}});
+});
+</script>
+</body>
+</html>
